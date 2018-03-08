@@ -1,18 +1,22 @@
+'''
+Grant Tremblay's (very) slight modification of code by Jeremy Sanders
+'''
+
 import sys
 import os
 import argparse
 
 from astropy.io import fits
 import scipy.ndimage
-import numpy as N
+import numpy as np
 
 def run(infile, outfile, scale):
     f = fits.open(infile)
     img = f[0].data
 
     # convert to float if required
-    if issubclass(img.dtype.type, N.integer):
-        img = img.astype(N.float32)
+    if issubclass(img.dtype.type, np.integer):
+        img = img.astype(np.float32)
 
     proc = scipy.ndimage.gaussian_gradient_magnitude(img, scale)
 
