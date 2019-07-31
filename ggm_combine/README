@@ -5,7 +5,7 @@ with different scales. It presents a control for varying the scaling
 with radius for each input image. A checkbox for each image also
 allows scales to be switched on and off.
 
-Requirements: Python 2.7, PyQt4, numpy, pyfits, PyYaml, ds9
+Requirements: Python 3, PyQt5, numpy, Astropy, PyYaml
 
 The current implementation is VERY BASIC and USER-UNFRIENDLY, so
 please feel free to send improvements to the code.
@@ -36,5 +36,3 @@ written to out-pars.yml. Rename this to something safe (and the output
 fits file) if you want to keep a particular set of parameters.
 
 To modify the number of radial points, the yml file has to be edited.
-
-Note that WCS is lost in the output file!
