@@ -9,6 +9,8 @@ sip.setapi('QTime', 2)
 sip.setapi('QUrl', 2)
 sip.setapi('QVariant', 2)
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.uic import loadUi
+from PyQt5.QtCore import pyqtSignal, QLineF, QPointF, QRectF
+from PyQt5.QtGui import QPainterPath
+from PyQt5.QtWidgets import QApplication, QCheckBox, QGraphicsEllipseItem, QGraphicsItem, QGraphicsPathItem, QGraphicsScene, QGraphicsView, QGridLayout, QLineEdit, QWidget
+from PyQt5.uic import loadUi
+
