@@ -1,8 +1,10 @@
-from __future__ import division, print_function
+'''
+Cam Lawlor-Forsyth's small changes of code by Jeremy Sanders
+'''
 
 import itertools
 import qt
-import numpy as N
+import numpy as np
 
 class MarkerItem(qt.QGraphicsEllipseItem):
     def __init__(self, parent, x, y):
@@ -39,12 +41,12 @@ class CurveScene(qt.QGraphicsScene):
         #    self.addItem(ell)
         #    self.ellipses.append(ell)
 
-        maxx = N.max(vals[0])
-        maxy = N.max(vals[1])
+        maxx = np.max(vals[0])
+        maxy = np.max(vals[1])
         self.maxx = maxx
 
         for x, y in zip(*vals):
-            e = MarkerItem(self, N.sqrt(x/maxx)*width, height-y/maxy*height)
+            e = MarkerItem(self, np.sqrt(x/maxx)*width, height-y/maxy*height)
             self.addItem(e)
             self.ellipses.append(e)
 
@@ -62,13 +64,13 @@ class CurveScene(qt.QGraphicsScene):
             xvals.append( (x/width)**2*self.maxx )
             yvals.append( (height-y)/height )
 
-        xvals = N.array(xvals)
-        yvals = N.array(yvals)
+        xvals = np.array(xvals)
+        yvals = np.array(yvals)
 
         # draw line
-        xpts = N.arange(0, width)
+        xpts = np.arange(0, width)
         xv = (xpts/width)**2*self.maxx
-        yv = N.interp(xv, xvals, yvals)
+        yv = np.interp(xv, xvals, yvals)
         ypts = height-yv*height
 
         path = qt.QPainterPath()
