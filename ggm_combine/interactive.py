@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-from __future__ import division, print_function
+'''
+Cam Lawlor-Forsyth's small changes of code by Jeremy Sanders
+'''
 
 import sys
 import os
@@ -14,7 +16,7 @@ import yaml
 from astropy.io import fits
 from astropy.wcs import WCS
 from astropy.nddata import Cutout2D
-import numpy as N
+import numpy as np
 
 import curvecontrol
 
@@ -35,7 +37,7 @@ def ds9xpa(img, hdr, filename=None):
     hdus = fits.HDUList([hdu])
     hdus.writeto(tempfn)
 
-    os.system('xpaset ds9 fits < %s' % tempfn)
+#    os.system('xpaset ds9 fits < %s' % tempfn)
 
     if filename is None:
         os.unlink(tempfn)
@@ -79,23 +81,22 @@ class ImageContainer:
                     hdr = new_w.to_header()
             self.images.append(image)
 
-            radii = N.array(d['weightrad'], dtype=N.float64)
+            radii = np.array(d['weightrad'], dtype=np.float64)
             self.radii.append(radii)
-            weightvals = N.array(d['weightvals'], dtype=N.float64)
-            maxval = round(N.max(weightvals), 2)
+            weightvals = np.array(d['weightvals'], dtype=np.float64)
+            maxval = round(np.max(weightvals), 2)
             self.scales.append(maxval)
             self.weights.append(weightvals/maxval)
         # set the header, which will be used later when writing the file
         some_random_str = ''.join(choice(ascii_uppercase) for i in range(10))
-        with open('tmp' + some_random_str, 'w') as f:
-            hdr.totextfile(f, clobber=False)
+        hdr.totextfile('tmp' + some_random_str, overwrite=False)
 
         if chop:
             xc -= chop[0]
             yc -= chop[1]
 
-        self.radiiimg = N.fromfunction(
-            lambda y, x: N.sqrt((x-xc)**2+(y-yc)**2),
+        self.radiiimg = np.fromfunction(
+            lambda y, x: np.sqrt((x-xc)**2+(y-yc)**2),
             self.images[0].shape)
 
     def writeOutputPars(self, filename):
@@ -105,7 +106,7 @@ class ImageContainer:
             self.pars['data'][i]['weightrad'] = r.tolist()
             self.pars['data'][i]['weightvals'] = (w*s).tolist()
 
-        print('pars', repr(self.pars))
+#        print('pars', repr(self.pars))
 
         # write to output
         with open(filename, 'w') as fout:
@@ -114,19 +115,19 @@ class ImageContainer:
     def filterAdd(self):
         """Combine input images using interpolation."""
 
-        out = N.zeros(self.images[0].shape)
+        out = np.zeros(self.images[0].shape)
         for image, radii, weights, scale in zip(
             self.images, self.radii, self.weights, self.scales):
             if scale > 0:
-                print(id(image))
-                print('radii', radii)
-                print('weights', weights)
-                print('scale', scale)
+#                print(id(image))
+#                print('radii', radii)
+#                print('weights', weights)
+#                print('scale', scale)
 
-                interpol = N.interp(self.radiiimg, radii, weights*scale)
+                interpol = np.interp(self.radiiimg, radii, weights*scale)
                 out += interpol*image
 
-        maxval = N.max(out[N.isfinite(out)])
+        maxval = np.max(out[np.isfinite(out)])
         out = out / maxval
         return out
 
@@ -137,7 +138,7 @@ class Window(qt.QWidget):
 
         # load parameters
         with open(infile) as f:
-            self.pars = pars = yaml.load(f)
+            self.pars = pars = yaml.load(f, Loader=yaml.FullLoader)
 
         self.images = ImageContainer(pars)
 
@@ -170,8 +171,8 @@ class Window(qt.QWidget):
 
             radii = self.images.radii[i]
             weights = self.images.weights[i]
-            print('r', radii)
-            print('w', weights)
+#            print('r', radii)
+#            print('w', weights)
 
             cntrl = curvecontrol.CurveView([radii, weights])
             cntrl.changed.connect( getOnChanged(i) )
@@ -192,7 +193,7 @@ class Window(qt.QWidget):
     def redraw(self):
         img = self.images.filterAdd()
         tmp_file = max(glob.iglob('tmp*'), key=os.path.getctime)
-        print('Temporary header file: %s.' % tmp_file)
+#        print('Temporary header file: %s.' % tmp_file)
         hdr = fits.Header.fromtextfile(tmp_file)
         ds9xpa(img, hdr, filename=self.pars['image']['outfilename'])
         self.images.writeOutputPars('out-pars.yml')
@@ -203,7 +204,7 @@ def main():
     app = qt.QApplication(sys.argv)
     win = Window(filename)
     win.show()
-    app.exec_()
+#    app.exec_()
 
 if __name__ == '__main__':
     main()
