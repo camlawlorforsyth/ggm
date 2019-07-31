@@ -26,7 +26,7 @@ applies the gaussian gradient magnitude filter to an input fits image,
 using a particular scale, sigma, in pixels.
 
 Requirements:
- - Python 2.7, pyfits, numpy, scipy
+ - Python 3, Astropy, numpy, scipy
 
 To run, type
 
@@ -34,12 +34,12 @@ To run, type
 
 Where sigma is a floating point value >0
 
-hideregions2
+hideregions
 ------------
 
 This is a tool to cosmetically hide point sources in fits images. It
 fills point sources with random values from the surrounding pixel
-region. See hideregions2/README for details.
+region. See hideregions/README for details.
 
 ggm_combine
 -----------
